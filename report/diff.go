@@ -1,10 +1,11 @@
-package main
+package report
 
 import (
 	"fmt"
 	"github.com/pmezard/go-difflib/difflib"
+	"io"
 	"strings"
-	F "test-cli/F"
+	"test-cli/F"
 )
 
 func generateDiffs(expected, actual string) string {
@@ -24,20 +25,28 @@ type Accept interface {
 
 type Diff interface {
 	Accept
+	ReportPrinter
 	Diff() string
 	ExceptLines() []string
 	ActualLines() []string
 	Lines() []string
-	Print()
 }
 
 type Differ struct {
-	expected string
-	actual   string
-	lines    []string
-
+	expected    string
+	actual      string
+	lines       []string
 	actualLines []string
 	exceptLines []string
+	ReportPrinter
+}
+
+func NewDiffer(expected, actual io.Reader, printer ReportPrinter) *Differ {
+	return &Differ{
+		expected:      ReadAll(expected),
+		actual:        ReadAll(actual),
+		ReportPrinter: printer,
+	}
 }
 
 func (d *Differ) ExceptLines() []string {
@@ -103,24 +112,23 @@ func (d *Differ) Diff() string {
 	return text
 }
 
-func (d *Differ) Print() {
+func (d *Differ) Beauty() {
+
 	text := d.Diff()
 	lines := strings.Split(text, "\n")
 
 	if len(lines) < 2 {
 		return
 	}
-
-	F.Infoln("[Diff Details]")
-	F.Defaultln(lines[2])
-
-	F.Successln("Expected: ")
+	d.Infoln("[Diff Details]")
+	d.Defaultln(lines[2])
+	d.Successln("Expected: ")
 
 	for _, line := range d.ExceptLines() {
-		F.Defaultln(line)
+		d.Defaultln(line)
 	}
 
-	F.Errorln("Actual: ")
+	d.Errorln("Actual: ")
 
 	for idx, line := range d.ActualLines() {
 		var tokens []string
@@ -128,7 +136,7 @@ func (d *Differ) Print() {
 			tokens = exceptLineTokens(d.ExceptLines()[idx])
 		}
 
-		printLine(tokens, line)
+		printLine(tokens, line, d)
 		fmt.Println()
 	}
 
@@ -136,7 +144,7 @@ func (d *Differ) Print() {
 	if lastIdx > 0 {
 		lastIdx = len(d.ExceptLines()) - lastIdx
 		for _, line := range d.ExceptLines()[lastIdx:] {
-			F.Errorln(line)
+			d.Errorln(line)
 		}
 
 	}
@@ -147,8 +155,7 @@ func exceptLineTokens(line string) []string {
 	return strings.Fields(line)
 }
 
-func printLine(tokens []string, line string) {
-
+func printLine(tokens []string, line string, p F.Printer) {
 	for {
 		if len(line) == 0 {
 			break
@@ -171,14 +178,14 @@ func printLine(tokens []string, line string) {
 			}
 
 			if len(tokens) == 0 {
-				F.Error(newToken)
+				p.Error(newToken)
 				continue
 			}
 
 			if judgeToken(tokens[0], newToken) {
-				F.Success(newToken)
+				p.Success(newToken)
 			} else {
-				F.Error(newToken)
+				p.Error(newToken)
 			}
 			tokens = tokens[1:]
 

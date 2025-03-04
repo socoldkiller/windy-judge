@@ -1,5 +1,4 @@
-// T/color.go
-package T
+package F
 
 import (
 	"github.com/gookit/color"
@@ -16,60 +15,78 @@ var (
 	DefaultStyle = color.New(color.White)
 )
 
+type Terminal struct {
+}
+
+func (t Terminal) Beauty() {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t Terminal) KeyValueFormat(format string, key string, value ...any) {
+	t.Timef("%s", key)
+	DefaultStyle.Printf(format, value...)
+}
+
+func (t Terminal) Time(a ...any) {
+	//TODO implement me
+	panic("implement me")
+}
+
 // 带样式的打印方法
-func Error(a ...any) {
+func (t Terminal) Error(a ...any) {
 	ErrorStyle.Print(a...)
 }
 
-func Errorln(a ...any) {
+func (t Terminal) Errorln(a ...any) {
 	ErrorStyle.Println(a...)
 }
 
-func Success(a ...any) {
+func (t Terminal) Success(a ...any) {
 	SuccessStyle.Print(a...)
 }
 
-func Successln(a ...any) {
+func (t Terminal) Successln(a ...any) {
 	SuccessStyle.Println(a...)
 }
 
-func Info(a ...any) {
+func (t Terminal) Info(a ...any) {
 	InfoStyle.Print(a...)
 }
 
-func Infoln(a ...any) {
+func (t Terminal) Infoln(a ...any) {
 	InfoStyle.Println(a...)
 }
 
-func Warn(a ...any) {
+func (t Terminal) Warn(a ...any) {
 	WarnStyle.Print(a...)
 }
 
-func Warnln(a ...any) {
+func (t Terminal) Warnln(a ...any) {
 	WarnStyle.Println(a...)
 }
 
-func Timef(format string, a ...any) {
+func (t Terminal) Timef(format string, a ...any) {
 	TimeStyle.Printf(format, a...)
 }
 
-func Timeln(a ...any) {
+func (t Terminal) Timeln(a ...any) {
 	TimeStyle.Println(a...)
 }
 
-func Diff(a ...any) {
+func (t Terminal) Diff(a ...any) {
 	DiffStyle.Print(a...)
 }
 
-func Diffln(a ...any) {
+func (t Terminal) Diffln(a ...any) {
 	DiffStyle.Println(a...)
 }
 
-func Defaultln(a ...any) {
+func (t Terminal) Defaultln(a ...any) {
 	DefaultStyle.Println(a...)
 }
 
-func TitleTimeF(format, title string, a ...any) {
-	Timef("%s", title)
+func (t Terminal) TitleTimeF(format, title string, a ...any) {
+	t.Timef("%s", title)
 	DefaultStyle.Printf(format, a...)
 }

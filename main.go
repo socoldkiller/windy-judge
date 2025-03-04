@@ -1,13 +1,10 @@
-// main.go
+/*
+Copyright © 2025 NAME HERE <EMAIL ADDRESS>
+*/
 package main
 
-import (
-	"time"
-)
+import "test-cli/cmd"
 
 func main() {
-	input := "1 2 2 3 4 5 6"
-	output := "1 2 2 3 4 5 7\nabv cd\nfasdf"
-	report := NewReport("1", 10*time.Second, input, input, output)
-	report.Print()
+	cmd.Execute()
 }
