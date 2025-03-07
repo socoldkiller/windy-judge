@@ -8,8 +8,8 @@ func (p Judge) Beauty() {
 	p.Info("[Comparison Result] ")
 	switch p.d.IsAccept() {
 	case true:
-		p.Successln("✅ Accept (Output Matched)")
+		p.Successln("✅ Accepted! Your output matches the expected result.")
 	case false:
-		p.Errorln("❌ Error (Output Mismatch)")
+		p.Errorln("❌ Incorrect output! The result does not match the expected output.")
 	}
 }

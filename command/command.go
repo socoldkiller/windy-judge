@@ -187,9 +187,11 @@ func (r *DefaultTestResult) Beauty() {
 	p := r.p
 	usedTime := fmt.Sprintf("%.2fs", r.UsedTime.Seconds())
 	switch {
+	case r.Total == 0:
+		p.Defaultln("🔍 No test cases were found or executed. Please ensure your tests are correctly set up. 🛠️")
 	case r.Failed == 0:
 		p.Defaultln("🎉 Congratulations! All "+strconv.Itoa(r.Total)+" test cases passed successfully! ✅🎯", "used time:", usedTime, "Keep up the great work! 🚀🔥")
 	default:
-		p.Errorln("❌ "+strconv.Itoa(r.Failed)+" of "+strconv.Itoa(r.Total)+" test cases failed!", "used time:", usedTime, "Please check the errors above.")
+		p.Errorln("❌ "+strconv.Itoa(r.Failed)+"/"+strconv.Itoa(r.Total)+" test cases failed!", "used time:", usedTime, "Please check the errors above.")
 	}
 }
