@@ -6,10 +6,10 @@ package cmd
 import (
 	"os"
 	"strings"
-	"test-cli/F"
-	"test-cli/command"
-	"test-cli/parser"
-	"test-cli/report"
+	"windy-judge/F"
+	"windy-judge/command"
+	"windy-judge/parser"
+	"windy-judge/report"
 
 	"github.com/spf13/cobra"
 )
@@ -34,10 +34,10 @@ which can be either a local file path or a URL. The command runs the test case,
 captures the program output, compares it with the expected output, and generates a detailed report.
 
 Example usage:
-  ./test-cli test <command> <input_source>
+  ./windy-judge test <command> <input_source>
 
 Example:
-  ./test-cli test cat https://example.com
+  ./windy-judge test cat https://example.com
 
 This command will execute "cat" with the input file located at "https://example.com",
 compare the output with the expected result, and generate a report indicating whether the test passed or failed.`,

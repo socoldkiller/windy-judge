@@ -4,8 +4,8 @@ import (
 	"errors"
 	"io"
 	"os/exec"
-	"test-cli/F"
 	"time"
+	"windy-judge/F"
 )
 
 type Printer = F.Printer

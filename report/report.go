@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"test-cli/F"
-	"test-cli/command"
 	"time"
+	"windy-judge/F"
+	"windy-judge/command"
 )
 
 type Options func(*Report)

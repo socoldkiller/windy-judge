@@ -45,8 +45,8 @@ write it to the standard output. Any errors encountered during the read process 
 displayed in the console.
 
 Example usage:
-  ./test-cli print ./example.txt
-  ./test-cli print https://example.com/data.txt`,
+  ./windy-judge print ./example.txt
+  ./windy-judge print https://example.com/data.txt`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 

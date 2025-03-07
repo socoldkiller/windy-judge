@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"test-cli/command"
+	"windy-judge/command"
 )
 
 type TestCase = command.TestCase

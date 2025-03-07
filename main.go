@@ -3,7 +3,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 */
 package main
 
-import "test-cli/cmd"
+import "windy-judge/cmd"
 
 func main() {
 	cmd.Execute()

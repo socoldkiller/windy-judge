@@ -5,7 +5,7 @@ import (
 	"github.com/pmezard/go-difflib/difflib"
 	"io"
 	"strings"
-	"test-cli/F"
+	"windy-judge/F"
 )
 
 func generateDiffs(expected, actual string) string {
