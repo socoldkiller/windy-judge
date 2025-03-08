@@ -25,6 +25,10 @@ func selectTestCaseParser(s string) parser.TestCaseParser {
 	return parser.NewHttpTestCaseParser(s)
 }
 
+func parseCmdArgs(arg string) []string {
+	return strings.Fields(arg)
+}
+
 // testCmd represents the test command
 var testCmd = &cobra.Command{
 	Use:   "test",
@@ -48,8 +52,9 @@ compare the output with the expected result, and generate a report indicating wh
 		p := selectTestCaseParser(args[1])
 		render := report.NewRender(report.WithPrinter(terminal))
 
+		cmdArgs := parseCmdArgs(args[0])
 		cmd := command.NewTestCaseCommand(
-			command.WithCommand(command.NewCmd(args[0])),
+			command.WithCommand(command.NewCmd(cmdArgs[0], cmdArgs[1:]...)),
 			command.WithTestCase(p),
 			command.WithRender(render),
 		)
