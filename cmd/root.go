@@ -11,13 +11,20 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "windy-judge",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "Automated Test Judge Tool with Multi-format Case Parsing and Smart Diff Analysis",
+	Long: `A Go-based automated test judging system with core features:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+- Supports multiple test case formats: JSON/YAML/Text/HTTP
+- Intelligent diff analysis algorithm for precise result comparison
+- Generates detailed reports in HTML/Markdown formats
+- CI/CD integration with exit code based result reporting
+- Extensible plugin architecture for custom parsers and reporters
+
+Typical use cases:
+  1. Automated test framework result validation
+  2. Programming problem scoring system
+  3. Data comparison and consistency checks
+  4. CI/CD quality gates`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
