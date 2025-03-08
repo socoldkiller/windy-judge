@@ -6,12 +6,12 @@ import (
 
 // 定义全局颜色样式
 var (
-	ErrorStyle   = color.New(color.FgRed, color.Bold)    // 错误样式（红色粗体）
-	SuccessStyle = color.New(color.FgGreen, color.Bold)  // 成功样式（绿色粗体）
-	InfoStyle    = color.New(color.FgBlue, color.Bold)   // 信息样式（蓝色粗体）
-	WarnStyle    = color.New(color.FgYellow)             // 警告样式（黄色）
-	TimeStyle    = color.New(color.FgCyan)               // 时间样式（青色）
-	DiffStyle    = color.New(color.BgRed, color.FgWhite) // 差异样式（红底白字）
+	ErrorStyle   = color.New(color.FgRed, color.Bold)
+	SuccessStyle = color.New(color.FgGreen, color.Bold)
+	InfoStyle    = color.New(color.FgBlue, color.Bold)
+	WarnStyle    = color.New(color.FgYellow)
+	TimeStyle    = color.New(color.FgCyan)
+	DiffStyle    = color.New(color.BgRed, color.FgWhite)
 	DefaultStyle = color.New(color.White)
 )
 
