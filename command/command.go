@@ -81,7 +81,7 @@ func (cmd *TestCaseCommand) runOneTestCase(r Render, idx int, testCase *TestCase
 		elapsed,
 		output,
 		input,
-		buf.String(),
+		strings.TrimSpace(buf.String()),
 		warnErr,
 	)
 
