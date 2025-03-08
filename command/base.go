@@ -33,6 +33,7 @@ func (c *Cmd) Run(r io.Reader, w io.Writer) error {
 	cmd := exec.Command(c.cmd, c.args...)
 	cmd.Stdin = r
 	cmd.Stdout = w
+	cmd.Stderr = w
 	return cmd.Run()
 }
 
