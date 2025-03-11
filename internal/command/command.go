@@ -131,9 +131,8 @@ func (cmd *TestCaseCommand) Run(r io.Reader, w io.Writer) error {
 	)
 
 	if testCaseSet, err = ReadTestCaseSet(cmd.parser); err != nil {
-		return nil
+		//TODO
 	}
-
 	render := cmd.caseTask
 	passedCount := 0
 	totalCount := len(testCaseSet)
