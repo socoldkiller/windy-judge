@@ -1,5 +1,7 @@
 package report
 
-import "windy-judge/command"
+import (
+	"windy-judge/internal/command"
+)
 
 type Writer = command.Render

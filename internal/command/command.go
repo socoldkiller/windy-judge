@@ -15,10 +15,10 @@ func ReadTestCaseSet(caseParser TestCaseParser) (TestCaseSet, error) {
 }
 
 type TestCaseCommand struct {
-	parser     TestCaseParser
-	mainRender Render
+	parser      TestCaseParser
+	caseTask    Render
+	caseSetTask Render
 	CmdRunner
-	bottomRender Render
 }
 
 type Option func(*TestCaseCommand)
@@ -30,9 +30,9 @@ func NewTestCaseCommand(opts ...Option) CmdRunner {
 		opt(c)
 	}
 
-	if c.bottomRender == nil {
-		c.bottomRender = &DefaultTestResult{
-			p: c.mainRender.Printer(),
+	if c.caseSetTask == nil {
+		c.caseSetTask = &DefaultTestResult{
+			p: c.caseTask.Printer(),
 		}
 	}
 	return c
@@ -53,13 +53,13 @@ func WithTestCase(parser TestCaseParser) Option {
 
 func WithRender(render Render) Option {
 	return func(cmd *TestCaseCommand) {
-		cmd.mainRender = render
+		cmd.caseTask = render
 	}
 }
 
 func WithBottomRender(bottomRender Render) Option {
 	return func(cmd *TestCaseCommand) {
-		cmd.bottomRender = bottomRender
+		cmd.caseSetTask = bottomRender
 	}
 }
 
@@ -134,7 +134,7 @@ func (cmd *TestCaseCommand) Run(r io.Reader, w io.Writer) error {
 		return nil
 	}
 
-	render := cmd.mainRender
+	render := cmd.caseTask
 	passedCount := 0
 	totalCount := len(testCaseSet)
 	var usedTime time.Duration
@@ -155,10 +155,10 @@ func (cmd *TestCaseCommand) Run(r io.Reader, w io.Writer) error {
 
 	// Display test results
 
-	if err = cmd.writeTestCaseSet(cmd.bottomRender, totalCount, passedCount, usedTime); err != nil {
+	if err = cmd.writeTestCaseSet(cmd.caseSetTask, totalCount, passedCount, usedTime); err != nil {
 		return err
 	}
-	cmd.bottomRender.Beauty()
+	cmd.caseSetTask.Beauty()
 	return nil
 
 }

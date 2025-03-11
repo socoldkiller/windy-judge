@@ -6,19 +6,19 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"windy-judge/F"
-	"windy-judge/command"
+	F2 "windy-judge/internal/F"
+	"windy-judge/internal/command"
 )
 
 type Options func(*Report)
 
-func WithPrinter(p F.Printer) Options {
+func WithPrinter(p F2.Printer) Options {
 	return func(r *Report) {
 		r.ReportPrinter = p
 	}
 }
 
-type ReportPrinter = F.Printer
+type ReportPrinter = F2.Printer
 type TestCaseResult = command.TestCaseResult
 
 type Report struct {
@@ -50,7 +50,7 @@ func (r *Report) IsAccept() bool {
 func NewRender(opts ...Options,
 ) *Report {
 	r := &Report{
-		ReportPrinter: new(F.Terminal),
+		ReportPrinter: new(F2.Terminal),
 	}
 	for _, opt := range opts {
 		opt(r)
@@ -81,6 +81,6 @@ func (r *Report) Warn(err error) {
 	r.Warnln(warningInfo)
 }
 
-func (r *Report) Printer() F.Printer {
+func (r *Report) Printer() F2.Printer {
 	return r.ReportPrinter
 }

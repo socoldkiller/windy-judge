@@ -4,14 +4,13 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"github.com/spf13/cobra"
 	"os"
 	"strings"
-	"windy-judge/F"
-	"windy-judge/command"
-	"windy-judge/parser"
-	"windy-judge/report"
-
-	"github.com/spf13/cobra"
+	"windy-judge/internal/F"
+	"windy-judge/internal/command"
+	"windy-judge/internal/parser"
+	"windy-judge/internal/report"
 )
 
 func selectTestCaseParser(s string) parser.TestCaseParser {

@@ -1,4 +1,3 @@
-
 input:
 output:
 A Go-based automated test judging system with core features:
@@ -29,4 +28,3 @@ Flags:
   -t, --toggle   Help message for toggle
 
 Use "windy-judge [command] --help" for more information about a command.
-

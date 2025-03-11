@@ -5,7 +5,7 @@ import (
 	"io"
 	"os/exec"
 	"time"
-	"windy-judge/F"
+	"windy-judge/internal/F"
 )
 
 type Printer = F.Printer
