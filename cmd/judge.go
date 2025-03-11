@@ -14,15 +14,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var gTerminal F.Terminal
+
 func selectTestCaseParser(s string) parser.TestCaseParser {
+	var p parser.TestCaseParser
 	if _, err := os.Open(s); err == nil {
-		return parser.NewFileTestCaseParser(s)
+		p = parser.NewFileTestCaseParser(s)
+		return p
 	}
 
 	if !strings.HasPrefix(s, "https") {
 		s = "https://" + s
 	}
-	return parser.NewHttpTestCaseParser(s)
+	if p = parser.NewHttpTestCaseParser(s); p == nil {
+		gTerminal.Errorln("[error]: no file to parse")
+		os.Exit(1)
+	}
+	return p
 }
 
 func parseCmdArgs(arg string) []string {
