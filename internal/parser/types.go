@@ -1,10 +1,20 @@
 package parser
 
 import (
-	"windy-judge/internal/command"
+	"io"
 )
 
-type TestCase = command.TestCase
-type TestCaseSet = command.TestCaseSet
-type ReaderParser = command.ReaderParser
-type TestCaseParser = command.TestCaseParser
+type TestCase struct {
+	Input  string
+	Output string
+}
+
+type TestCaseSet = []TestCase
+
+type ReaderParser interface {
+	Parse(reader io.Reader) (TestCaseSet, error)
+}
+
+type TestCaseParser interface {
+	Parse() (TestCaseSet, error)
+}

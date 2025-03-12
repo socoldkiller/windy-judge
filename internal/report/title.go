@@ -11,5 +11,5 @@ func (p Title) Beauty() {
 	p.Info("----------------------------------------------\n")
 	p.Timeln("[Timestamps]")
 	p.KeyValueFormat("%s\n", "- Test Time: ", time.Now().Format(time.DateTime))
-	p.KeyValueFormat("%.2fs\n", "- Execution Time: ", p.ExecutionTime.Seconds())
+	p.KeyValueFormat("%.2fs\n", "- Execution Time: ", p.Result.Elapsed.Seconds())
 }

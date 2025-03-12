@@ -4,14 +4,13 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"github.com/spf13/cobra"
 	"os"
 	"strings"
 	"windy-judge/internal/F"
 	"windy-judge/internal/command"
 	"windy-judge/internal/parser"
-	"windy-judge/internal/report"
-
-	"github.com/spf13/cobra"
+	"windy-judge/internal/render"
 )
 
 var gTerminal F.Terminal
@@ -56,21 +55,15 @@ compare the output with the expected result, and generate a report indicating wh
 
 	Args: cobra.ExactArgs(2),
 	Run: func(c *cobra.Command, args []string) {
-		terminal := new(F.Terminal)
-
 		p := selectTestCaseParser(args[1])
-		render := report.NewRender(report.WithPrinter(terminal))
-
+		renderRunner := render.NewCaseRunner(render.WithPrinter(gTerminal))
 		cmdArgs := parseCmdArgs(args[0])
 		cmd := command.NewTestCaseCommand(
-			command.WithCommand(command.NewCmd(cmdArgs[0], cmdArgs[1:]...)),
-			command.WithTestCase(p),
-			command.WithRender(render),
+			command.WithTestCaseParser(p),
+			command.WithCommand(cmdArgs[0], cmdArgs[1:]...),
+			command.WithTaskRunner(renderRunner),
 		)
-
-		if err := cmd.Run(nil, nil); err != nil {
-			terminal.Error(err.Error())
-		}
+		cmd.Run("")
 	},
 }
 

@@ -1,18 +1,27 @@
 package command
 
-import "io"
+import (
+	"windy-judge/internal/F"
+	"windy-judge/internal/parser"
+)
 
-type TestCase struct {
-	Input  string
-	Output string
+type Printer = F.Printer
+
+type TestCase = parser.TestCase
+type TestCaseSet = parser.TestCaseSet
+type TestCaseParser = parser.TestCaseParser
+
+type CmdResultRunner interface {
+	Run(input string) Result
 }
 
-type TestCaseSet = []TestCase
-
-type ReaderParser interface {
-	Parse(reader io.Reader) (TestCaseSet, error)
+type TestCaseResult struct {
+	ID       string
+	Excepted string
+	Result
 }
 
-type TestCaseParser interface {
-	Parse() (TestCaseSet, error)
+type TestCaseCommandRunner interface {
+	TestCaseTask(result TestCaseResult)
+	TestCaseSetTask(result []TestCaseResult)
 }
