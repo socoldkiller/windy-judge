@@ -64,6 +64,8 @@ compare the output with the expected result, and generate a report indicating wh
 			command.WithTaskRunner(renderRunner),
 		)
 		cmd.Run("")
+
+		os.Exit(cmd.ErrCode())
 	},
 }
 

@@ -24,6 +24,12 @@ type Result struct {
 type Cmd struct {
 	cmd  string
 	args []string
+
+	errCode int
+}
+
+func (c *Cmd) ErrCode() int {
+	return c.errCode
 }
 
 func NewCmd(cmd string, args ...string) *Cmd {
@@ -41,10 +47,15 @@ func (c *Cmd) Run(input string) Result {
 	e := cmd.Run()
 	end := time.Now()
 
+	errMessage := MaybeErrorMessage(e)
+	if errMessage != "" {
+		c.errCode = 1
+	}
+
 	return Result{
 		Input:   input,
 		Output:  strings.TrimSpace(buf.String()),
-		Error:   MaybeErrorMessage(e),
+		Error:   errMessage,
 		Elapsed: end.Sub(start),
 	}
 

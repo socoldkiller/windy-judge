@@ -13,6 +13,12 @@ type TestCaseCommand struct {
 	parser     TestCaseParser
 	taskRunner TestCaseCommandRunner
 	c          *Cmd
+
+	errCode int
+}
+
+func (cmd *TestCaseCommand) ErrCode() int {
+	return cmd.errCode
 }
 
 func (cmd *TestCaseCommand) runOneTestCase(testCase TestCase) Result {
@@ -43,6 +49,10 @@ func (cmd *TestCaseCommand) Run(in string) Result {
 			Result:   res,
 		}
 		cmd.taskRunner.TestCaseTask(ts)
+
+		if cmd.taskRunner.ErrCode() != 0 {
+			cmd.errCode = cmd.taskRunner.ErrCode()
+		}
 
 		taskIOResult = append(taskIOResult, ts)
 	}
