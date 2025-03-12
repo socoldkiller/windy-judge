@@ -13,6 +13,7 @@ type TestCaseParser = parser.TestCaseParser
 
 type CmdResultRunner interface {
 	Run(input string) Result
+	ErrCode() int
 }
 
 type TestCaseResult struct {
@@ -24,4 +25,5 @@ type TestCaseResult struct {
 type TestCaseCommandRunner interface {
 	TestCaseTask(result TestCaseResult)
 	TestCaseSetTask(result []TestCaseResult)
+	ErrCode() int
 }

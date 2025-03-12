@@ -10,17 +10,18 @@ import (
 	"windy-judge/internal/report"
 )
 
-type Runner = command.TestCaseCommandRunner
+var exitCode = 0
 
 type CaseRunner struct {
 	p           F.Printer
 	passedCount int
 	usedTime    time.Duration
+	hook        SFCaseHook
 }
 
 type Option func(runner *CaseRunner)
 
-func (c *CaseRunner) TestCaseTask(result command.TestCaseResult) {
+func (c *CaseRunner) TestCaseTask(result TestCaseResult) {
 	var (
 		jsonData []byte
 		err      error
@@ -34,13 +35,14 @@ func (c *CaseRunner) TestCaseTask(result command.TestCaseResult) {
 		return
 	}
 
-	c.usedTime += r.Elapsed
-	if r.IsAccept() {
-		c.passedCount++
+	switch r.IsAccept() {
+	case true:
+		c.hook.SuccessCaseHook(result)
+	case false:
+		c.hook.FailCaseHook(result)
+
 	}
-
 	r.Beauty()
-
 }
 
 func (c *CaseRunner) TestCaseSetTask(result []command.TestCaseResult) {
@@ -50,11 +52,8 @@ func (c *CaseRunner) TestCaseSetTask(result []command.TestCaseResult) {
 	)
 
 	res := DefaultTestResult{
-		Total:    len(result),
-		Passed:   c.passedCount,
-		Failed:   len(result) - c.passedCount,
-		UsedTime: c.usedTime,
-		p:        c.p,
+		SFCaseInfo: c.hook.Info(),
+		p:          c.p,
 	}
 
 	if jsonData, err = json.Marshal(res); err != nil {
@@ -63,16 +62,15 @@ func (c *CaseRunner) TestCaseSetTask(result []command.TestCaseResult) {
 	_, err = res.Write(jsonData)
 
 	res.Beauty()
-	return
+}
 
+func (c *CaseRunner) ErrCode() int {
+	return exitCode
 }
 
 type DefaultTestResult struct {
-	Total    int
-	Passed   int
-	Failed   int
-	UsedTime time.Duration
-	p        F.Printer
+	SFCaseInfo
+	p F.Printer
 }
 
 func (r *DefaultTestResult) Write(p []byte) (n int, err error) {
@@ -103,7 +101,9 @@ func WithPrinter(p F.Printer) Option {
 }
 
 func NewCaseRunner(opts ...Option) *CaseRunner {
-	runner := &CaseRunner{}
+	runner := &CaseRunner{
+		hook: &DefaultSFCaseHook{},
+	}
 
 	for _, opt := range opts {
 		opt(runner)
