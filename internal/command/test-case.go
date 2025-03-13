@@ -11,7 +11,7 @@ func ReadTestCaseSet(caseParser TestCaseParser) (TestCaseSet, error) {
 
 type TestCaseCommand struct {
 	parser     TestCaseParser
-	taskRunner TestCaseCommandRunner
+	taskRunner TestCaseTaskRunner
 	c          *Cmd
 
 	errCode int
@@ -86,7 +86,7 @@ func WithTestCaseParser(p parser.TestCaseParser) Option {
 	}
 }
 
-func WithTaskRunner(task TestCaseCommandRunner) Option {
+func WithTaskRunner(task TestCaseTaskRunner) Option {
 	return func(c *TestCaseCommand) {
 		c.taskRunner = task
 
