@@ -15,8 +15,8 @@ install:
 test:
 	@go test -v -cover $(PKGS)
 
-.PHONY: test-integration
-test-unit: build
+.PHONY: release
+test-unit: release
 	@chmod +x shell/judge.sh $(BIN_NAME)
 	@./shell/judge.sh
 
@@ -32,7 +32,7 @@ clean:
 
 .PHONY: release
 release:
-	@CGO_ENABLED=0 go build -ldflags="-s -w"
+	@CGO_ENABLED=0 go build  -buildvcs=false  -ldflags="-s -w"
 
 .PHONY: all
 all: lint test build
