@@ -10,7 +10,7 @@ import (
 	"windy-judge/internal/F"
 	"windy-judge/internal/command"
 	"windy-judge/internal/parser"
-	"windy-judge/internal/render"
+	"windy-judge/internal/renderTask"
 )
 
 var gTerminal F.Terminal
@@ -56,7 +56,7 @@ compare the output with the expected result, and generate a report indicating wh
 	Args: cobra.ExactArgs(2),
 	Run: func(c *cobra.Command, args []string) {
 		p := selectTestCaseParser(args[1])
-		renderRunner := render.NewCaseRunner(render.WithPrinter(gTerminal))
+		renderRunner := renderTask.NewTestCaseRunner(renderTask.WithPrinter(gTerminal))
 		cmdArgs := parseCmdArgs(args[0])
 		cmd := command.NewTestCaseCommand(
 			command.WithTestCaseParser(p),

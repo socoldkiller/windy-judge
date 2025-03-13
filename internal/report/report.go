@@ -1,7 +1,6 @@
 package report
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -58,11 +57,9 @@ func NewRender(opts ...Options,
 	return r
 }
 
-func (r *Report) Write(p []byte) (n int, err error) {
-	if err := json.Unmarshal(p, &r.TestCaseResult); err != nil {
-		return 0, err
-	}
-
+func (r *Report) Write(data any) (err error) {
+	result := data.(*TestCaseResult)
+	r.TestCaseResult = *result
 	*r = Report{
 		TestTime:       time.Now(),
 		d:              NewDiffer(strings.NewReader(r.Excepted), strings.NewReader(r.Output), r.ReportPrinter),
@@ -72,12 +69,12 @@ func (r *Report) Write(p []byte) (n int, err error) {
 		ReportPrinter:  r.ReportPrinter,
 		TestCaseResult: r.TestCaseResult,
 	}
-	return len(p), nil
+	return nil
 }
 
 func (r *Report) Warn(err error) {
 	r.Errorln("[Warning]")
-	warningInfo := fmt.Sprintf("warnning: %s", err.Error())
+	warningInfo := fmt.Sprintf("⚠️ warning!  %s", err.Error())
 	r.Warnln(warningInfo)
 }
 

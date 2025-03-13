@@ -20,9 +20,15 @@ type TestCaseResult struct {
 	ID       string
 	Excepted string
 	Result
+
+	accept bool /* check excepted and output */
 }
 
-type TestCaseCommandRunner interface {
+func (t *TestCaseResult) IsAccept() bool {
+	return t.accept
+}
+
+type TestCaseTaskRunner interface {
 	TestCaseTask(result TestCaseResult)
 	TestCaseSetTask(result []TestCaseResult)
 	ErrCode() int
