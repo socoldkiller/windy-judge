@@ -20,12 +20,6 @@ type TestCaseResult struct {
 	ID       string
 	Excepted string
 	Result
-
-	accept bool /* check excepted and output */
-}
-
-func (t *TestCaseResult) IsAccept() bool {
-	return t.accept
 }
 
 type TestCaseTaskRunner interface {
