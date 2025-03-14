@@ -1,0 +1,5 @@
+input:
+ls
+
+output:
+fas fas

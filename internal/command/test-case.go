@@ -1,94 +1,81 @@
 package command
 
 import (
+	"fmt"
 	"strconv"
-	"windy-judge/internal/parser"
+	"windy-judge/internal"
+	"windy-judge/internal/F"
+	"windy-judge/internal/runner"
 )
 
-func ReadTestCaseSet(caseParser TestCaseParser) (TestCaseSet, error) {
-	return caseParser.Parse()
-}
-
 type TestCaseCommand struct {
-	parser     TestCaseParser
-	taskRunner TestCaseTaskRunner
-	c          *Cmd
+	putter F.OutPutter
+	r      runner.Runner[TestCase, Result]
 
-	errCode int
+	cmd  string
+	args []string
 }
 
-func (cmd *TestCaseCommand) ErrCode() int {
-	return cmd.errCode
+func (t *TestCaseCommand) PreRun(input []TestCase) {
 }
 
-func (cmd *TestCaseCommand) runOneTestCase(testCase TestCase) Result {
-	runner := cmd.c
-	res := runner.Run(testCase.Input)
-	return res
+func (t *TestCaseCommand) PostRun(input []TestCase, output []internal.Result) {
+	var testCaseResult = DefaultTestResult{
+		putter: t.putter,
+	}
+	testCaseResult.Write(count)
+	testCaseResult.Beauty()
+
 }
 
-func (cmd *TestCaseCommand) Run(in string) Result {
+func NewTestCaseCommand(opts ...TestCaseOption) runner.Runner[[]TestCase, []internal.Result] {
+	testCaseCmd := &TestCaseCommand{}
+	for _, opt := range opts {
+		opt(testCaseCmd)
+	}
 
-	var (
-		err         error
-		testCaseSet TestCaseSet
+	testCaseCmd.r = NewCmd(
+		WithCmd(testCaseCmd.cmd, testCaseCmd.args...),
+		WithPrinter(testCaseCmd.putter),
 	)
 
-	if testCaseSet, err = ReadTestCaseSet(cmd.parser); err != nil {
-		//TODO
-	}
-
-	var taskIOResult []TestCaseResult
-	for idx, testCase := range testCaseSet {
-
-		res := cmd.runOneTestCase(testCase)
-
-		ts := TestCaseResult{
-			ID:       strconv.Itoa(idx),
-			Excepted: testCase.Output,
-			Result:   res,
-		}
-		cmd.taskRunner.TestCaseTask(ts)
-
-		if cmd.taskRunner.ErrCode() != 0 {
-			cmd.errCode = cmd.taskRunner.ErrCode()
-		}
-
-		taskIOResult = append(taskIOResult, ts)
-	}
-	cmd.taskRunner.TestCaseSetTask(taskIOResult)
-
-	return Result{}
+	return runner.NewBatchContextualRunner(testCaseCmd.r, testCaseCmd)
 }
 
-type Option func(*TestCaseCommand)
+type TestCaseOption func(c *TestCaseCommand)
 
-func NewTestCaseCommand(opts ...Option) CmdResultRunner {
-	c := &TestCaseCommand{}
-
-	for _, opt := range opts {
-		opt(c)
-	}
-
-	return c
-}
-
-func WithCommand(cmd string, args ...string) Option {
+func WithTestCaseCmd(cmd string, args ...string) TestCaseOption {
 	return func(c *TestCaseCommand) {
-		c.c = NewCmd(cmd, args...)
+		c.cmd = cmd
+		c.args = args
 	}
 }
 
-func WithTestCaseParser(p parser.TestCaseParser) Option {
-
+func WithTestCasePrinter(p F.OutPutter) TestCaseOption {
 	return func(c *TestCaseCommand) {
-		c.parser = p
+		c.putter = p
 	}
 }
 
-func WithTaskRunner(task TestCaseTaskRunner) Option {
-	return func(c *TestCaseCommand) {
-		c.taskRunner = task
+type DefaultTestResult struct {
+	TestCaseResultCount
+	putter F.OutPutter
+}
 
+func (r *DefaultTestResult) Write(data any) error {
+	r.TestCaseResultCount = data.(TestCaseResultCount)
+	return nil
+}
+
+func (r *DefaultTestResult) Beauty() {
+	p := r.putter
+	usedTime := fmt.Sprintf("%.2fs", r.usedTime.Seconds())
+	switch {
+	case r.total == 0:
+		p.Defaultln("🔍 No test cases were found or executed. Please ensure your tests are correctly set up. 🛠️")
+	case r.failed == 0:
+		p.Defaultln("🎉 Congratulations! All "+strconv.Itoa(r.total)+" test cases passed successfully! ✅🎯", "Execution time:", usedTime, "Keep up the great work! 🚀🔥")
+	default:
+		p.Errorln("❌ "+strconv.Itoa(r.failed)+"/"+strconv.Itoa(r.total)+" test cases failed!", "Execution time:", usedTime, "Please check the errors above.")
 	}
 }

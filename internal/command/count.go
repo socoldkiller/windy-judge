@@ -1,13 +1,8 @@
-package renderTask
+package command
 
 import (
 	"time"
-	"windy-judge/internal/command"
 )
-
-type TestCaseResult = command.TestCaseResult
-
-type Runner = command.TestCaseTaskRunner
 
 var (
 	exitCode int

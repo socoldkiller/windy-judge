@@ -4,20 +4,20 @@ import (
 	"errors"
 	"fmt"
 	"time"
-	F2 "windy-judge/internal/F"
-	"windy-judge/internal/command"
+	"windy-judge/internal"
+	"windy-judge/internal/F"
 )
 
 type Options func(*Report)
 
-func WithPrinter(p F2.Printer) Options {
+func WithPrinter(p F.OutPutter) Options {
 	return func(r *Report) {
 		r.ReportPrinter = p
 	}
 }
 
-type ReportPrinter = F2.Printer
-type TestCaseResult = command.TestCaseResult
+type ReportPrinter = F.OutPutter
+type TestCaseResult = internal.TestCaseResult
 
 type Report struct {
 	TestTime time.Time
@@ -48,7 +48,7 @@ func (r *Report) IsAccept() bool {
 func NewRender(opts ...Options,
 ) *Report {
 	r := &Report{
-		ReportPrinter: new(F2.Terminal),
+		ReportPrinter: new(F.Terminal),
 	}
 	for _, opt := range opts {
 		opt(r)
@@ -75,8 +75,4 @@ func (r *Report) Warn(err error) {
 	r.Errorln("[Warning]")
 	warningInfo := fmt.Sprintf("⚠️ warning!  %s", err.Error())
 	r.Warnln(warningInfo)
-}
-
-func (r *Report) Printer() F2.Printer {
-	return r.ReportPrinter
 }
