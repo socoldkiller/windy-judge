@@ -11,6 +11,7 @@ func (p Section) printSection(title, content string) {
 	if content == "" {
 		p.Warnln("<empty>")
 	} else {
+
 		lines := strings.Split(content, "\n")
 		for _, line := range lines {
 			p.Defaultln(line)

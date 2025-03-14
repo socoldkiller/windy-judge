@@ -3,7 +3,6 @@ package report
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 	F2 "windy-judge/internal/F"
 	"windy-judge/internal/command"
@@ -62,7 +61,7 @@ func (r *Report) Write(data any) (err error) {
 	r.TestCaseResult = *result
 	*r = Report{
 		TestTime:       time.Now(),
-		d:              NewDiffer(strings.NewReader(r.Excepted), strings.NewReader(r.Output), r.ReportPrinter),
+		d:              NewDiffer(r.Excepted, r.Output, r.ReportPrinter),
 		Title:          &Title{r},
 		Section:        &Section{r},
 		Judge:          &Judge{r},

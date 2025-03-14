@@ -3,7 +3,7 @@ package report
 import (
 	"fmt"
 	"github.com/pmezard/go-difflib/difflib"
-	"io"
+	"slices"
 	"strings"
 	"windy-judge/internal/F"
 )
@@ -19,43 +19,9 @@ func generateDiffs(expected, actual string) string {
 	return text
 }
 
-type Accept interface {
-	IsAccept() bool
-}
+func getExceptLines(lines []string) []string {
 
-type Diff interface {
-	Accept
-	ReportPrinter
-	Diff() string
-	ExceptLines() []string
-	ActualLines() []string
-	Lines() []string
-}
-
-type Differ struct {
-	expected    string
-	actual      string
-	lines       []string
-	actualLines []string
-	exceptLines []string
-	ReportPrinter
-}
-
-func NewDiffer(expected, actual io.Reader, printer ReportPrinter) *Differ {
-	return &Differ{
-		expected:      ReadAll(expected),
-		actual:        ReadAll(actual),
-		ReportPrinter: printer,
-	}
-}
-
-func (d *Differ) ExceptLines() []string {
-	if len(d.exceptLines) != 0 {
-		return d.exceptLines
-	}
-
-	var actualLines []string
-	lines := d.Lines()
+	var exceptLines []string
 	for {
 
 		if len(lines) == 0 {
@@ -63,21 +29,15 @@ func (d *Differ) ExceptLines() []string {
 		}
 
 		if line := lines[0]; len(line) != 0 && line[0] == '-' {
-			actualLines = append(actualLines, line)
+			exceptLines = append(exceptLines, line)
 		}
 		lines = lines[1:]
 	}
+	return exceptLines
 
-	d.exceptLines = actualLines
-	return d.exceptLines
 }
 
-func (d *Differ) ActualLines() []string {
-	lines := d.Lines()
-
-	if len(d.actualLines) != 0 {
-		return d.actualLines
-	}
+func getActualLines(lines []string) []string {
 
 	var actualLines []string
 	for {
@@ -92,19 +52,52 @@ func (d *Differ) ActualLines() []string {
 		lines = lines[1:]
 	}
 
-	d.actualLines = actualLines
-	return d.actualLines
+	return actualLines
 }
 
-func (d *Differ) Lines() []string {
-	if len(d.lines) == 0 {
-		d.lines = strings.Split(generateDiffs(d.expected, d.actual), "\n")[2:]
+type Accept interface {
+	IsAccept() bool
+}
+
+type Diff interface {
+	Accept
+	ReportPrinter
+	Diff() string
+}
+
+type Differ struct {
+	expected    string
+	actual      string
+	lines       []string
+	actualLines []string
+	exceptLines []string
+	ReportPrinter
+}
+
+func NewDiffer(expected, actual string, printer ReportPrinter) *Differ {
+	lines := strings.Split(generateDiffs(expected, actual), "\n")
+
+	if len(lines) > 2 {
+		lines = lines[2:]
 	}
-	return d.lines
+
+	differ := &Differ{
+		expected:      expected,
+		actual:        actual,
+		ReportPrinter: printer,
+		lines:         lines,
+		actualLines:   getActualLines(lines),
+		exceptLines:   getExceptLines(lines),
+	}
+	return differ
 }
 
 func (d *Differ) IsAccept() bool {
-	return d.expected == d.actual
+
+	exceptTokens := strings.Fields(strings.Join(d.exceptLines, " "))
+	actualTokens := strings.Fields(strings.Join(d.actualLines, " "))
+
+	return slices.EqualFunc(exceptTokens, actualTokens, judgeToken)
 }
 
 func (d *Differ) Diff() string {
@@ -114,36 +107,39 @@ func (d *Differ) Diff() string {
 
 func (d *Differ) Beauty() {
 
-	text := d.Diff()
-	lines := strings.Split(text, "\n")
+	if d.IsAccept() {
+		return
+	}
+
+	lines := d.lines
 
 	if len(lines) < 2 {
 		return
 	}
 	d.Infoln("[Diff Details]")
-	d.Defaultln(lines[2])
+	d.Defaultln(lines[0])
 	d.Successln("Expected: ")
 
-	for _, line := range d.ExceptLines() {
+	for _, line := range d.exceptLines {
 		d.Defaultln(line)
 	}
 
 	d.Errorln("Actual: ")
 
-	for idx, line := range d.ActualLines() {
+	for idx, line := range d.actualLines {
 		var tokens []string
-		if idx < len(d.ExceptLines()) {
-			tokens = exceptLineTokens(d.ExceptLines()[idx])
+		if idx < len(d.exceptLines) {
+			tokens = exceptLineTokens(d.exceptLines[idx])
 		}
 
 		printLine(tokens, line, d)
 		fmt.Println()
 	}
 
-	lastIdx := len(d.ExceptLines()) - len(d.ActualLines())
+	lastIdx := len(d.exceptLines) - len(d.actualLines)
 	if lastIdx > 0 {
-		lastIdx = len(d.ExceptLines()) - lastIdx
-		for _, line := range d.ExceptLines()[lastIdx:] {
+		lastIdx = len(d.exceptLines) - lastIdx
+		for _, line := range d.exceptLines[lastIdx:] {
 			d.Errorln(line)
 		}
 
@@ -163,7 +159,7 @@ func printLine(tokens []string, line string, p F.Printer) {
 
 		switch line[0] {
 
-		case ' ':
+		case ' ', '\t':
 			fmt.Printf("%c", line[0])
 			line = line[1:]
 
