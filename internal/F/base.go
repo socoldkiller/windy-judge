@@ -1,6 +1,6 @@
 package F
 
-type Printer interface {
+type OutPutter interface {
 	Error(a ...any)
 	Errorln(a ...any)
 	Success(a ...any)

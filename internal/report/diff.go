@@ -151,7 +151,7 @@ func exceptLineTokens(line string) []string {
 	return strings.Fields(line)
 }
 
-func printLine(tokens []string, line string, p F.Printer) {
+func printLine(tokens []string, line string, p F.OutPutter) {
 	for {
 		if len(line) == 0 {
 			break

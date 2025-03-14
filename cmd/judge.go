@@ -7,16 +7,16 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 	"strings"
+	"windy-judge/internal"
 	"windy-judge/internal/F"
 	"windy-judge/internal/command"
 	"windy-judge/internal/parser"
-	"windy-judge/internal/renderTask"
 )
 
 var gTerminal F.Terminal
 
-func selectTestCaseParser(s string) parser.TestCaseParser {
-	var p parser.TestCaseParser
+func selectTestCaseParser(s string) parser.TestCaseParser[internal.TestCase] {
+	var p parser.TestCaseParser[internal.TestCase]
 	if _, err := os.Open(s); err == nil {
 		p = parser.NewFileTestCaseParser(s)
 		return p
@@ -56,29 +56,18 @@ compare the output with the expected result, and generate a report indicating wh
 	Args: cobra.ExactArgs(2),
 	Run: func(c *cobra.Command, args []string) {
 		p := selectTestCaseParser(args[1])
-		renderRunner := renderTask.NewTestCaseRunner(renderTask.WithPrinter(gTerminal))
+		testCases, _ := p.Parse()
+
 		cmdArgs := parseCmdArgs(args[0])
 		cmd := command.NewTestCaseCommand(
-			command.WithTestCaseParser(p),
-			command.WithCommand(cmdArgs[0], cmdArgs[1:]...),
-			command.WithTaskRunner(renderRunner),
+			command.WithTestCaseCmd(cmdArgs[0], cmdArgs[1:]...),
+			command.WithTestCasePrinter(gTerminal),
 		)
-		cmd.Run("")
-
-		os.Exit(cmd.ErrCode())
+		cmd.Run(testCases)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(judgeCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// judgeCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// judgeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
