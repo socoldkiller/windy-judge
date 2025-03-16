@@ -10,7 +10,6 @@ import (
 
 type TestCaseCommand struct {
 	putter F.OutPutter
-	r      runner.Runner[TestCase, Result]
 
 	cmd  string
 	args []string
@@ -34,12 +33,12 @@ func NewTestCaseCommand(opts ...TestCaseOption) runner.Runner[[]TestCase, []inte
 		opt(testCaseCmd)
 	}
 
-	testCaseCmd.r = NewCmd(
+	r := NewCmd(
 		WithCmd(testCaseCmd.cmd, testCaseCmd.args...),
 		WithPrinter(testCaseCmd.putter),
 	)
 
-	return runner.NewBatchContextualRunner(testCaseCmd.r, testCaseCmd)
+	return runner.NewBatchContextualRunner(r, testCaseCmd)
 }
 
 type TestCaseOption func(c *TestCaseCommand)
