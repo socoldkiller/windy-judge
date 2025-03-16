@@ -10,13 +10,13 @@ import (
 
 type Options func(*Report)
 
-func WithPrinter(p F.OutPutter) Options {
+func WithOutPutter(p F.OutPutter) Options {
 	return func(r *Report) {
-		r.ReportPrinter = p
+		r.OutPutter = p
 	}
 }
 
-type ReportPrinter = F.OutPutter
+type OutPutter = F.OutPutter
 type TestCaseResult = internal.TestCaseResult
 
 type Report struct {
@@ -26,7 +26,7 @@ type Report struct {
 	*Title
 	*Judge
 	*Section
-	ReportPrinter
+	OutPutter
 }
 
 func (r *Report) Beauty() {
@@ -48,7 +48,7 @@ func (r *Report) IsAccept() bool {
 func NewRender(opts ...Options,
 ) *Report {
 	r := &Report{
-		ReportPrinter: new(F.Terminal),
+		OutPutter: new(F.Terminal),
 	}
 	for _, opt := range opts {
 		opt(r)
@@ -61,11 +61,11 @@ func (r *Report) Write(data any) (err error) {
 	r.TestCaseResult = *result
 	*r = Report{
 		TestTime:       time.Now(),
-		d:              NewDiffer(r.Excepted, r.Output, r.ReportPrinter),
+		d:              NewDiffer(r.Excepted, r.Output, r.OutPutter),
 		Title:          &Title{r},
 		Section:        &Section{r},
 		Judge:          &Judge{r},
-		ReportPrinter:  r.ReportPrinter,
+		OutPutter:      r.OutPutter,
 		TestCaseResult: r.TestCaseResult,
 	}
 	return nil
