@@ -61,20 +61,21 @@ type Accept interface {
 
 type Diff interface {
 	Accept
-	ReportPrinter
+	OutPutter
 	Diff() string
 }
 
 type Differ struct {
+	OutPutter
+
 	expected    string
 	actual      string
 	lines       []string
 	actualLines []string
 	exceptLines []string
-	ReportPrinter
 }
 
-func NewDiffer(expected, actual string, printer ReportPrinter) *Differ {
+func NewDiffer(expected, actual string, printer OutPutter) *Differ {
 	lines := strings.Split(generateDiffs(expected, actual), "\n")
 
 	if len(lines) > 2 {
@@ -82,12 +83,12 @@ func NewDiffer(expected, actual string, printer ReportPrinter) *Differ {
 	}
 
 	differ := &Differ{
-		expected:      expected,
-		actual:        actual,
-		ReportPrinter: printer,
-		lines:         lines,
-		actualLines:   getActualLines(lines),
-		exceptLines:   getExceptLines(lines),
+		OutPutter:   printer,
+		expected:    expected,
+		actual:      actual,
+		lines:       lines,
+		actualLines: getActualLines(lines),
+		exceptLines: getExceptLines(lines),
 	}
 	return differ
 }

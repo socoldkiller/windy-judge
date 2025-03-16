@@ -53,7 +53,7 @@ func (c *Cmd) PostRun(input TestCase, output Result) {
 		Result:   output,
 	}
 
-	re := report.NewRender(report.WithPrinter(c.p))
+	re := report.NewRender(report.WithOutPutter(c.p))
 	re.Write(&ts)
 	count.total += 1
 	registerCount(count, re)
