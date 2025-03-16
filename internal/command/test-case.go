@@ -28,11 +28,14 @@ func (t *TestCaseCommand) PostRun(input []TestCase, output []internal.Result) {
 }
 
 func NewTestCaseCommand(opts ...TestCaseOption) runner.Runner[[]TestCase, []internal.Result] {
-	testCaseCmd := &TestCaseCommand{}
+	testCaseCmd := &TestCaseCommand{
+		putter: new(F.Terminal),
+	}
+
 	for _, opt := range opts {
 		opt(testCaseCmd)
 	}
-
+	//Of course, the putter has been properly initialized, so we can now initialize cmd correctly.
 	r := NewCmd(
 		WithCmd(testCaseCmd.cmd, testCaseCmd.args...),
 		WithPrinter(testCaseCmd.putter),
@@ -45,6 +48,11 @@ type TestCaseOption func(c *TestCaseCommand)
 
 func WithTestCaseCmd(cmd string, args ...string) TestCaseOption {
 	return func(c *TestCaseCommand) {
+		// Why not directly initialize the Cmd command, such as NewCmd(cmd, args...)?
+		// The reason is that the putter required by cmd is not included in the parameters,
+		// and the putter field may not be properly initialized in advance.
+		// This means that the putter field could be nil.
+		// Therefore, we have to delay the initialization of cmd until NewTestCaseCommand, ensuring that the putter is correctly set.
 		c.cmd = cmd
 		c.args = args
 	}
