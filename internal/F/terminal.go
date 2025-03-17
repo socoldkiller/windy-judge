@@ -4,7 +4,6 @@ import (
 	"github.com/gookit/color"
 )
 
-// 定义全局颜色样式
 var (
 	ErrorStyle   = color.New(color.FgRed, color.Bold)
 	SuccessStyle = color.New(color.FgGreen, color.Bold)
@@ -33,7 +32,6 @@ func (t Terminal) Time(a ...any) {
 	panic("implement me")
 }
 
-// 带样式的打印方法
 func (t Terminal) Error(a ...any) {
 	ErrorStyle.Print(a...)
 }
