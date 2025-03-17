@@ -16,7 +16,7 @@ Execute the following command to run a test (replace `test` and `add` with your 
 
 ```bash
 
-./windy-judge test add https://example.com
+./windy-judge judge add https://example.com
 ```
 
 ### 2️⃣ Example Output
