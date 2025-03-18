@@ -5,7 +5,7 @@ import (
 	"github.com/pmezard/go-difflib/difflib"
 	"slices"
 	"strings"
-	"windy-judge/internal/F"
+	"windy-judge/internal/outputter"
 )
 
 func generateDiffs(expected, actual string) string {
@@ -152,7 +152,7 @@ func exceptLineTokens(line string) []string {
 	return strings.Fields(line)
 }
 
-func printLine(tokens []string, line string, p F.OutPutter) {
+func printLine(tokens []string, line string, p outputter.OutPutter) {
 	for {
 		if len(line) == 0 {
 			break
