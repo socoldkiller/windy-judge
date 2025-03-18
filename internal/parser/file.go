@@ -6,10 +6,10 @@ import (
 
 type FileTestCaseParser struct {
 	file   *os.File
-	parser ReaderParser
+	parser ReaderParser[TestCase]
 }
 
-func NewFileTestCaseParser(filepath string) TestCaseParser {
+func NewFileTestCaseParser(filepath string) TestCaseParser[TestCase] {
 	file, err := os.Open(filepath)
 	if err != nil {
 		return nil
@@ -18,6 +18,6 @@ func NewFileTestCaseParser(filepath string) TestCaseParser {
 
 }
 
-func (p FileTestCaseParser) Parse() (cases TestCaseSet, err error) {
+func (p FileTestCaseParser) Parse() (cases []TestCase, err error) {
 	return p.parser.Parse(p.file)
 }

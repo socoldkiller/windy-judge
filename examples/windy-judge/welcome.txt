@@ -20,8 +20,8 @@ Usage:
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
   help        Help about any command
+  judge       Run a test case with the specified command and input source.
   print       Print content from a file or URL
-  test        Run a test case with the specified command and input source.
 
 Flags:
   -h, --help     help for windy-judge

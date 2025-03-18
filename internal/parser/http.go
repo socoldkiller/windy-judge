@@ -7,10 +7,10 @@ import (
 
 type HttpTestCaseParser struct {
 	r      io.Reader
-	parser ReaderParser
+	parser ReaderParser[TestCase]
 }
 
-func NewHttpTestCaseParser(URL string) TestCaseParser {
+func NewHttpTestCaseParser(URL string) TestCaseParser[TestCase] {
 	response, err := resty.New().R().Get(URL)
 	if err != nil {
 		return nil
@@ -19,6 +19,6 @@ func NewHttpTestCaseParser(URL string) TestCaseParser {
 
 }
 
-func (p HttpTestCaseParser) Parse() (TestCaseSet, error) {
+func (p HttpTestCaseParser) Parse() ([]TestCase, error) {
 	return p.parser.Parse(p.r)
 }

@@ -5,13 +5,13 @@ import (
 	"strings"
 )
 
-type InputOutputParse func(input io.Reader) (TestCaseSet, error)
+type InputOutputParse func(input io.Reader) ([]TestCase, error)
 
-func (p InputOutputParse) Parse(reader io.Reader) (TestCaseSet, error) {
+func (p InputOutputParse) Parse(reader io.Reader) ([]TestCase, error) {
 	return p(reader)
 }
 
-func parse(r io.Reader) (cases TestCaseSet, err error) {
+func parse(r io.Reader) (cases []TestCase, err error) {
 
 	textBytes, err := io.ReadAll(r)
 	if err != nil {

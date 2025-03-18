@@ -1,25 +1,23 @@
 package report
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
-	F2 "windy-judge/internal/F"
-	"windy-judge/internal/command"
+	"windy-judge/internal"
+	"windy-judge/internal/outputter"
 )
 
 type Options func(*Report)
 
-func WithPrinter(p F2.Printer) Options {
+func WithOutPutter(p outputter.OutPutter) Options {
 	return func(r *Report) {
-		r.ReportPrinter = p
+		r.OutPutter = p
 	}
 }
 
-type ReportPrinter = F2.Printer
-type TestCaseResult = command.TestCaseResult
+type OutPutter = outputter.OutPutter
+type TestCaseResult = internal.TestCaseResult
 
 type Report struct {
 	TestTime time.Time
@@ -28,7 +26,7 @@ type Report struct {
 	*Title
 	*Judge
 	*Section
-	ReportPrinter
+	OutPutter
 }
 
 func (r *Report) Beauty() {
@@ -47,10 +45,10 @@ func (r *Report) IsAccept() bool {
 	return r.d.IsAccept()
 }
 
-func NewRender(opts ...Options,
+func NewOutPutter(opts ...Options,
 ) *Report {
 	r := &Report{
-		ReportPrinter: new(F2.Terminal),
+		OutPutter: new(outputter.Terminal),
 	}
 	for _, opt := range opts {
 		opt(r)
@@ -58,29 +56,23 @@ func NewRender(opts ...Options,
 	return r
 }
 
-func (r *Report) Write(p []byte) (n int, err error) {
-	if err := json.Unmarshal(p, &r.TestCaseResult); err != nil {
-		return 0, err
-	}
-
+func (r *Report) Write(data any) (err error) {
+	result := data.(*TestCaseResult)
+	r.TestCaseResult = *result
 	*r = Report{
 		TestTime:       time.Now(),
-		d:              NewDiffer(strings.NewReader(r.Excepted), strings.NewReader(r.Output), r.ReportPrinter),
+		d:              NewDiffer(r.Excepted, r.Output, r.OutPutter),
 		Title:          &Title{r},
 		Section:        &Section{r},
 		Judge:          &Judge{r},
-		ReportPrinter:  r.ReportPrinter,
+		OutPutter:      r.OutPutter,
 		TestCaseResult: r.TestCaseResult,
 	}
-	return len(p), nil
+	return nil
 }
 
 func (r *Report) Warn(err error) {
 	r.Errorln("[Warning]")
-	warningInfo := fmt.Sprintf("warnning: %s", err.Error())
+	warningInfo := fmt.Sprintf("⚠️ warning!  %s", err.Error())
 	r.Warnln(warningInfo)
-}
-
-func (r *Report) Printer() F2.Printer {
-	return r.ReportPrinter
 }
