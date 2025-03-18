@@ -45,7 +45,7 @@ func (r *Report) IsAccept() bool {
 	return r.d.IsAccept()
 }
 
-func NewRender(opts ...Options,
+func NewOutPutter(opts ...Options,
 ) *Report {
 	r := &Report{
 		OutPutter: new(F.Terminal),
