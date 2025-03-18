@@ -8,12 +8,12 @@ import (
 	"os"
 	"strings"
 	"windy-judge/internal"
-	"windy-judge/internal/F"
 	"windy-judge/internal/command"
+	"windy-judge/internal/outputter"
 	"windy-judge/internal/parser"
 )
 
-var gTerminal F.Terminal
+var gTerminal outputter.Terminal
 
 func selectTestCaseParser(s string) parser.TestCaseParser[internal.TestCase] {
 	var p parser.TestCaseParser[internal.TestCase]

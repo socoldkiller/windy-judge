@@ -5,18 +5,18 @@ import (
 	"fmt"
 	"time"
 	"windy-judge/internal"
-	"windy-judge/internal/F"
+	"windy-judge/internal/outputter"
 )
 
 type Options func(*Report)
 
-func WithOutPutter(p F.OutPutter) Options {
+func WithOutPutter(p outputter.OutPutter) Options {
 	return func(r *Report) {
 		r.OutPutter = p
 	}
 }
 
-type OutPutter = F.OutPutter
+type OutPutter = outputter.OutPutter
 type TestCaseResult = internal.TestCaseResult
 
 type Report struct {
@@ -48,7 +48,7 @@ func (r *Report) IsAccept() bool {
 func NewOutPutter(opts ...Options,
 ) *Report {
 	r := &Report{
-		OutPutter: new(F.Terminal),
+		OutPutter: new(outputter.Terminal),
 	}
 	for _, opt := range opts {
 		opt(r)

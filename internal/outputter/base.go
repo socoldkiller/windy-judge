@@ -1,4 +1,4 @@
-package F
+package outputter
 
 type OutPutter interface {
 	Error(a ...any)

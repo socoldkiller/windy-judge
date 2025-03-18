@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"strconv"
 	"windy-judge/internal"
-	"windy-judge/internal/F"
+	"windy-judge/internal/outputter"
 	"windy-judge/internal/runner"
 )
 
 type TestCaseCommand struct {
-	putter F.OutPutter
+	putter outputter.OutPutter
 
 	cmd  string
 	args []string
@@ -29,7 +29,7 @@ func (t *TestCaseCommand) PostRun(input []TestCase, output []internal.Result) {
 
 func NewTestCaseCommand(opts ...TestCaseOption) runner.Runner[[]TestCase, []internal.Result] {
 	testCaseCmd := &TestCaseCommand{
-		putter: new(F.Terminal),
+		putter: new(outputter.Terminal),
 	}
 
 	for _, opt := range opts {
@@ -58,7 +58,7 @@ func WithTestCaseCmd(cmd string, args ...string) TestCaseOption {
 	}
 }
 
-func WithTestCasePrinter(p F.OutPutter) TestCaseOption {
+func WithTestCasePrinter(p outputter.OutPutter) TestCaseOption {
 	return func(c *TestCaseCommand) {
 		c.putter = p
 	}
@@ -66,7 +66,7 @@ func WithTestCasePrinter(p F.OutPutter) TestCaseOption {
 
 type DefaultTestResult struct {
 	TestCaseResultCount
-	putter F.OutPutter
+	putter outputter.OutPutter
 }
 
 func (r *DefaultTestResult) Write(data any) error {

@@ -1,4 +1,4 @@
-package F
+package outputter
 
 import (
 	"github.com/gookit/color"

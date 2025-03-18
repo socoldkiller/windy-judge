@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 	"windy-judge/internal"
-	"windy-judge/internal/F"
+	"windy-judge/internal/outputter"
 	"windy-judge/internal/report"
 	"windy-judge/internal/runner"
 )
@@ -38,7 +38,7 @@ type Cmd struct {
 	args []string
 
 	count *TestCaseResultCount
-	p     F.OutPutter
+	p     outputter.OutPutter
 }
 
 func (c *Cmd) PreRun(input TestCase) {
@@ -99,7 +99,7 @@ func WithCmd(cmd string, args ...string) CmdOption {
 	}
 }
 
-func WithPrinter(putter F.OutPutter) CmdOption {
+func WithPrinter(putter outputter.OutPutter) CmdOption {
 	return func(c *Cmd) {
 		c.p = putter
 	}
